@@ -17,11 +17,14 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
   standalone: true,
   imports: [CommonModule, MatMenuModule, MatIconModule, FormsModule, HttpClientModule]
 })
+
+
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
   recordsPerPage = 20;
   currentPage = 1;
   paginatedTasks: Task[] = [];
+  
 
   constructor(private taskService: TaskService, public dialog: MatDialog) {}
 
@@ -54,20 +57,32 @@ export class TaskListComponent implements OnInit {
     }
   }
 
+  
+
   openNewTask(): void {
     const dialogRef = this.dialog.open(NewTaskModalComponent, {
       width: '500px',
       data: { task: {} } // Pass empty task for new task creation
     });
 
+    function toUTCDate(date: Date): Date {
+      return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    }
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         result.comments = result.description; // Map description to comments
+
+        if (result.dueDate) {
+          result.dueDate = toUTCDate(new Date(result.dueDate)).toISOString();
+        }
         this.taskService.createTask(result).subscribe(newTask => {
           this.tasks.push(newTask);
           this.updatePagination();
         });
       }
+
+
     });
   }
 
@@ -77,9 +92,19 @@ export class TaskListComponent implements OnInit {
       data: { task: task } // Pass the task data for editing
     });
 
+    function toUTCDate(date: Date): Date {
+      return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    }
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         result.comments = result.description; // Map description to comments
+        
+        // Convert dueDate to UTC format if it exists
+      if (result.dueDate) {
+        result.dueDate = toUTCDate(new Date(result.dueDate)).toISOString();
+      }
+
         this.taskService.updateTask(result).subscribe(updatedTask => {
           const index = this.tasks.findIndex(t => t.externalId === updatedTask.externalId);
           if (index !== -1) {
