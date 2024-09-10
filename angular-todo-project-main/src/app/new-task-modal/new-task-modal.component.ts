@@ -29,6 +29,7 @@ export class NewTaskModalComponent {
     description: '',
     assignedTo: ''
   };
+  title : string;
 
   constructor(
     public dialogRef: MatDialogRef<NewTaskModalComponent>,
@@ -37,6 +38,7 @@ export class NewTaskModalComponent {
     if (data.task) {
       this.task = { ...data.task };
     }
+    this.title = data.title;
   }
 
   save(): void {
