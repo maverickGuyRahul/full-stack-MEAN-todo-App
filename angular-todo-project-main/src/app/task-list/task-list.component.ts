@@ -62,7 +62,7 @@ export class TaskListComponent implements OnInit {
   openNewTask(): void {
     const dialogRef = this.dialog.open(NewTaskModalComponent, {
       width: '500px',
-      data: { task: {} } // Pass empty task for new task creation
+      data: { task: {}, title : "New Task" } // Pass empty task for new task creation
     });
 
     function toUTCDate(date: Date): Date {
@@ -89,7 +89,7 @@ export class TaskListComponent implements OnInit {
   editTask(task: Task): void {
     const dialogRef = this.dialog.open(NewTaskModalComponent, {
       width: '500px',
-      data: { task: task } // Pass the task data for editing
+      data: { task: task, title : "Edit Task" } // Pass the task data for editing
     });
 
     function toUTCDate(date: Date): Date {
